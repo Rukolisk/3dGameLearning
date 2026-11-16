@@ -5,8 +5,11 @@ extends Node
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	$UserInterface/Retry.hide()
+	SessionManager.player_loaded.rpc_id(1) # Tell the server that this peer has loaded.
 
-
+func start_game() -> void:
+	print("Tout le monde est prêt, la partie commence !")
+	$MobTimer.start()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass

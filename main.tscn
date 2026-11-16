@@ -85,7 +85,6 @@ transform = Transform3D(-0.037799574, 0, 0.99928534, 0, 1, 0, -0.99928534, 0, -0
 
 [node name="MobTimer" type="Timer" parent="." unique_id=1593231499]
 wait_time = 0.5
-autostart = true
 
 [node name="UserInterface" type="Control" parent="." unique_id=1469262710]
 layout_mode = 3
