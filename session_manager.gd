@@ -41,6 +41,7 @@ func create_game() -> Error:
 	return OK	
 	
 func remove_multiplayer_peer():
+	multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	players.clear()
 	

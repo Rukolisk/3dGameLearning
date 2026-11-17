@@ -8,8 +8,9 @@ func _physics_process(delta: float) -> void:
 	
 @rpc("any_peer", "call_local", "reliable")
 func squash():
-	queue_free()
-	squashed.emit()
+	if !is_queued_for_deletion():
+		queue_free()
+		squashed.emit()
 
 func initialize(start_position, player_position, speed, angle):
 	var target_position = player_position

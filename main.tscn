@@ -118,7 +118,22 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.39215687)
 
-[node name="Label" type="Label" parent="UserInterface/Retry" unique_id=1664547464]
+[node name="Deconnexion" type="Button" parent="UserInterface/Retry" unique_id=1054007228]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -87.5
+offset_top = -138.0
+offset_right = 92.5
+offset_bottom = -96.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "quitter la game"
+
+[node name="RetryLabel" type="Label" parent="UserInterface/Retry" unique_id=1664547464]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -141,3 +156,4 @@ spawn_limit = 9
 spawn_path = NodePath("../Mobs")
 
 [connection signal="timeout" from="MobTimer" to="." method="_on_mob_timer_timeout"]
+[connection signal="pressed" from="UserInterface/Retry/Deconnexion" to="." method="_on_deconnexion_pressed"]

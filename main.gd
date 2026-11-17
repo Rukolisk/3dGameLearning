@@ -14,6 +14,9 @@ func _ready() -> void:
 	$MobSpawner.spawn_function = spawn_mob
 	$UserInterface/Retry.hide()
 	SessionManager.player_loaded.rpc_id(1) # Tell the server that this peer has loaded.
+	SessionManager.server_disconnected.connect(_on_server_disconnected)
+	SessionManager.player_disconnected.connect(_on_player_disconnected)
+
 
 func start_game() -> void:
 	print("Tout le monde est prêt, la partie commence !")
@@ -37,7 +40,7 @@ func spawn_player(data: Variant) -> Node:
 	player.position = data["position"]
 	return player
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	pass
 
 func spawn_mob(data: Variant) -> Node:
@@ -76,10 +79,30 @@ func show_retry():
 	$UserInterface/Retry.show()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if is_multiplayer_authority():
+	if multiplayer.is_server():
 		if event.is_action_pressed("ui_accept") and $UserInterface/Retry.visible:
 			reload.rpc()
 			
 @rpc("authority","call_local","reliable")
 func reload():
 	get_tree().reload_current_scene()
+
+
+func _on_deconnexion_pressed() -> void:
+	SessionManager.remove_multiplayer_peer()
+	get_tree().change_scene_to_file("res://menu.tscn")
+
+func _on_server_disconnected() -> void:
+	get_tree().change_scene_to_file("res://menu.tscn")
+
+func _on_player_disconnected(id) -> void:
+	# 1. Seul le serveur s'en occupe
+	if not multiplayer.is_server():
+		return
+
+	# 2. Chercher le personnage dans Players, par son nom (l'ID en texte)
+	var player = $Players.get_node_or_null(str(id))
+
+	# 3. S'il existe encore, on le fait mourir
+	if player != null:
+		player.die()
