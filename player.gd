@@ -1,13 +1,20 @@
 extends CharacterBody3D
-signal hit
+signal hit(player)
 @export var speed = 14
 @export var fall_acceleration = 75
 @export var jump_impulse = 20
 @export var bounce_impulse = 16
 
 var target_velocity= Vector3.ZERO
-
+@export var network_position: Vector3
+func _enter_tree() -> void:
+	set_multiplayer_authority(int(self.name), true)
+	network_position = self.position
+	
 func _physics_process(delta: float) -> void:
+	if !is_multiplayer_authority():
+		position = lerp(self.position, network_position, delta * 15)
+		return
 	var direction = Vector3.ZERO
 	
 	if Input.is_action_pressed("move_right"):
@@ -44,7 +51,7 @@ func _physics_process(delta: float) -> void:
 		if collision.get_collider().is_in_group("mob"):
 			var mob = collision.get_collider()
 			if(Vector3.UP.dot(collision.get_normal())> 0.5 and target_velocity.y < 0):
-				mob.squash()
+				mob.squash.rpc_id(1)
 				target_velocity.y = bounce_impulse
 				break
 		
@@ -52,11 +59,15 @@ func _physics_process(delta: float) -> void:
 	velocity = target_velocity
 	
 	move_and_slide()
+	network_position = self.position
+
 	$Pivot.rotation.x = PI / 6 * velocity.y / jump_impulse
 
+@rpc("authority", "call_local", "reliable")
 func die():
-	hit.emit()
-	queue_free()
+		queue_free()
+		hit.emit(self)
 	
 func _on_mob_detector_body_entered(body: Node3D) -> void:
-	die()
+	if is_multiplayer_authority():
+		die.rpc_id(1)

@@ -6,7 +6,7 @@ signal server_disconnected()
 
 const PORT = 7000
 const DEFAULT_SERVER_IP = "127.0.0.1"
-const MAX_CONNECTIONS = 20
+const MAX_CONNECTIONS = 9
 
 var players = {}
 var player_info = {"name": "name"}
@@ -37,7 +37,6 @@ func create_game() -> Error:
 		return error
 	multiplayer.multiplayer_peer=peer
 	players[1]=player_info
-	players_loaded += 1
 	player_connected.emit(1, player_info)
 	return OK	
 	

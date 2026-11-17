@@ -72,6 +72,17 @@ _data = {
 &"float": SubResource("Animation_i3pqv")
 }
 
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_onrkg"]
+properties/0/path = NodePath("Pivot:rotation")
+properties/0/spawn = false
+properties/0/replication_mode = 1
+properties/1/path = NodePath("AnimationPlayer:speed_scale")
+properties/1/spawn = false
+properties/1/replication_mode = 1
+properties/2/path = NodePath(".:network_position")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
 [node name="Player" type="CharacterBody3D" unique_id=1203581602]
 collision_mask = 6
 script = ExtResource("1_onrkg")
@@ -96,5 +107,9 @@ shape = SubResource("CylinderShape3D_vhdjg")
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=772611212]
 libraries/ = SubResource("AnimationLibrary_hqtel")
 autoplay = &"float"
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1211903955]
+replication_config = SubResource("SceneReplicationConfig_onrkg")
+visibility_update_mode = 1
 
 [connection signal="body_entered" from="MobDetector" to="." method="_on_mob_detector_body_entered"]

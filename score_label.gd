@@ -3,8 +3,11 @@ var score = 0
 
 func _on_mob_squashed():
 	score += 1
-	text = "Score: %s" % score
+	update_score.rpc(str(score))
 	
+@rpc("authority","call_local","reliable")
+func update_score(score: String):
+	text = "Score: %s" % score
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	pass # Replace with function body.

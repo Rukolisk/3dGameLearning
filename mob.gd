@@ -6,22 +6,22 @@ signal squashed
 func _physics_process(delta: float) -> void:
 	move_and_slide()
 	
+@rpc("any_peer", "call_local", "reliable")
 func squash():
-	squashed.emit()
 	queue_free()
+	squashed.emit()
 
-
-func initialize (start_position, player_position):
+func initialize(start_position, player_position, speed, angle):
 	var target_position = player_position
 	target_position.y = start_position.y
-	
+
 	look_at_from_position(start_position, target_position, Vector3.UP)
-	rotate_y(randf_range(-PI / 4, PI / 4))
-	
-	var random_speed = randi_range(min_speed, max_speed)
-	velocity = Vector3.FORWARD * random_speed
+	rotate_y(angle)                       # avant : randf_range(...)
+
+	velocity = Vector3.FORWARD * speed    # avant : randi_range(...)
 	velocity = velocity.rotated(Vector3.UP, rotation.y)
-	$AnimationPlayer.speed_scale = random_speed / min_speed
+	$AnimationPlayer.speed_scale = speed / min_speed
 
 func _on_visible_on_screen_notifier_3d_screen_exited() -> void:
-	queue_free()
+	if is_multiplayer_authority():
+		queue_free()
