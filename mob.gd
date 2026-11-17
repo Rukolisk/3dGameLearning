@@ -17,9 +17,9 @@ func initialize(start_position, player_position, speed, angle):
 	target_position.y = start_position.y
 
 	look_at_from_position(start_position, target_position, Vector3.UP)
-	rotate_y(angle)                       # avant : randf_range(...)
+	rotate_y(angle)                  
 
-	velocity = Vector3.FORWARD * speed    # avant : randi_range(...)
+	velocity = Vector3.FORWARD * speed
 	velocity = velocity.rotated(Vector3.UP, rotation.y)
 	$AnimationPlayer.speed_scale = speed / min_speed
 

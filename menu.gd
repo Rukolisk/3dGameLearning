@@ -5,6 +5,7 @@ extends Control
 func _ready() -> void:
 	SessionManager.player_connected.connect(_on_player_connected)
 	SessionManager.player_disconnected.connect(_on_player_disconnected)
+	SessionManager.server_disconnected.connect(_on_server_disconnected)
 	$Lancer.hide()
 	_mettre_a_jour_label()
 
@@ -31,6 +32,13 @@ func _on_player_connected(_id, _info) -> void:
 
 func _on_player_disconnected(_id, _info) -> void:
 		_mettre_a_jour_label()
+		
+func _on_server_disconnected() -> void:
+		_label_deconnecte()
+		_activer_boutons()
+		
+func _label_deconnecte() -> void:
+	$PlayerNumber.text = "l'Hôte à quitté"
 
 func _mettre_a_jour_label() -> void:
 	if SessionManager.players.size():
@@ -41,3 +49,7 @@ func _mettre_a_jour_label() -> void:
 func _desactiver_boutons() -> void:
 	$Heberger.disabled = true
 	$Rejoindre.disabled=true
+	
+func _activer_boutons() -> void:
+	$Heberger.disabled = false
+	$Rejoindre.disabled = false
