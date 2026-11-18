@@ -68,6 +68,21 @@ offset_bottom = 21.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="NameEdit" type="LineEdit" parent="." unique_id=1026405634]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -84.5
+offset_top = -25.0
+offset_right = 84.5
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+placeholder_text = "Username"
+
 [connection signal="pressed" from="Heberger" to="." method="_on_heberger_pressed"]
 [connection signal="pressed" from="Rejoindre" to="." method="_on_rejoindre_pressed"]
 [connection signal="pressed" from="Lancer" to="." method="_on_lancer_pressed"]

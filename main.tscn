@@ -99,6 +99,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_h2yge")
 
+[node name="Control" type="Control" parent="UserInterface" unique_id=794311901]
+layout_mode = 1
+anchors_preset = 0
+offset_right = 160.0
+offset_bottom = 206.0
+
 [node name="ScoreLabel" type="Label" parent="UserInterface" unique_id=222296874]
 layout_mode = 0
 offset_left = 65.0

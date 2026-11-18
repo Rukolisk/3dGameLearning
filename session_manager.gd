@@ -9,7 +9,7 @@ const DEFAULT_SERVER_IP = "127.0.0.1"
 const MAX_CONNECTIONS = 9
 
 var players = {}
-var player_info = {"name": "name"}
+var player_info = {"name": "", "score": 0}
 var players_loaded = []
 var loading = false
 
@@ -21,22 +21,27 @@ func _ready() -> void:
 	multiplayer.connection_failed.connect(_on_connected_fail)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
-func join_game(address = "") -> Error:
+func join_game(address = "", pseudo = "") -> Error:
 	if address.is_empty():
 		address = DEFAULT_SERVER_IP
+			
 	var peer = ENetMultiplayerPeer.new()
+
+	player_info.name = pseudo
+	
 	var error = peer.create_client(address, PORT)
 	if error:
 		return error
 	multiplayer.multiplayer_peer=peer
 	return OK
 	
-func create_game() -> Error:
+func create_game(pseudo = "") -> Error:
 	var peer = ENetMultiplayerPeer.new()
 	var error = peer.create_server(PORT, MAX_CONNECTIONS)
 	if error:
 		return error
 	multiplayer.multiplayer_peer=peer
+	player_info.name = pseudo
 	players[1]=player_info
 	player_connected.emit(1, player_info)
 	return OK	
@@ -85,6 +90,8 @@ func _on_player_disconnected(id):
 	
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
+	if player_info.name.is_empty():
+		player_info.name = "user"+str(peer_id)
 	players[peer_id]=player_info
 	player_connected.emit(peer_id, player_info)
 	

@@ -2,6 +2,7 @@ extends Node
 
 @export var mob_scene: PackedScene
 @export var player_scene: PackedScene
+
 var players = []
 const SPAWN_PER_LINE = 3
 const SPAWN_SPACING = 3
@@ -33,11 +34,12 @@ func start_game() -> void:
 		players.append(player)
 		index += 1
 	$MobTimer.start()
-
+	
 func spawn_player(data: Variant) -> Node:
 	var player = player_scene.instantiate()
 	player.name = str(data["id"])
 	player.position = data["position"]
+	player.get_node("PlayerInfo").text = SessionManager.players[data["id"]].name
 	return player
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:

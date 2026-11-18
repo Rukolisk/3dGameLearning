@@ -10,18 +10,24 @@ func _ready() -> void:
 	_mettre_a_jour_label()
 
 func _on_heberger_pressed() -> void:
-	var err = SessionManager.create_game()
+	var pseudo = $NameEdit.text
+	if pseudo.is_empty():
+		pseudo = "user1"
+	var err = SessionManager.create_game(pseudo)
 	if(err != OK):
 		$PlayerNumber.text = "Erreur serveur : %s" % err
 		return
 	$Lancer.show()
+	$NameEdit.hide()
 	_desactiver_boutons()
 
 func _on_rejoindre_pressed() -> void:
-	var err = SessionManager.join_game()
+	var pseudo = $NameEdit.text
+	var err = SessionManager.join_game("", pseudo)
 	if err != OK:
 		$PlayerNumber.text = "Erreur connexion : %s" % err
 		return
+	$NameEdit.hide()
 	_desactiver_boutons()
 
 func _on_lancer_pressed() -> void:
@@ -53,3 +59,4 @@ func _desactiver_boutons() -> void:
 func _activer_boutons() -> void:
 	$Heberger.disabled = false
 	$Rejoindre.disabled = false
+	$NameEdit.show()
