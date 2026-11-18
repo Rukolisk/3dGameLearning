@@ -30,7 +30,7 @@ func _on_lancer_pressed() -> void:
 func _on_player_connected(_id, _info) -> void:
 		_mettre_a_jour_label()
 
-func _on_player_disconnected(_id, _info) -> void:
+func _on_player_disconnected(_id) -> void:
 		_mettre_a_jour_label()
 		
 func _on_server_disconnected() -> void:

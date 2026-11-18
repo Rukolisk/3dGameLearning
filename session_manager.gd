@@ -10,7 +10,8 @@ const MAX_CONNECTIONS = 9
 
 var players = {}
 var player_info = {"name": "name"}
-var players_loaded = 0
+var players_loaded = []
+var loading = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -41,21 +42,30 @@ func create_game() -> Error:
 	return OK	
 	
 func remove_multiplayer_peer():
+	loading=false
 	multiplayer.multiplayer_peer.close()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	players.clear()
+	players_loaded.clear()
 	
 @rpc("call_local","reliable")
 func load_game(game_scene_path):
+	loading = true
+	players_loaded.clear()
 	get_tree().change_scene_to_file(game_scene_path)
 	
 @rpc("any_peer", "call_local", "reliable")
 func player_loaded():
-	if multiplayer.is_server():
-		players_loaded += 1
-		if players_loaded == players.size():
-			get_tree().current_scene.start_game()
-			players_loaded=0
+	if multiplayer.is_server() && loading:
+		players_loaded.append(multiplayer.get_remote_sender_id())
+		_check_all_player_loaded()
+			
+func _check_all_player_loaded() -> void:
+	if !loading || players_loaded.size() < players.size():
+		return
+	else:
+		loading = false
+		get_tree().current_scene.start_game()
 
 func _on_player_connected(id):
 	_register_player.rpc_id(id, player_info)
@@ -67,8 +77,11 @@ func _register_player(new_player_info):
 	player_connected.emit(new_player_id, new_player_info)
 	
 func _on_player_disconnected(id):
+	players_loaded.erase(id)
 	players.erase(id)
 	player_disconnected.emit(id)
+	if multiplayer.is_server():
+		_check_all_player_loaded()
 	
 func _on_connected_ok():
 	var peer_id = multiplayer.get_unique_id()
@@ -80,5 +93,4 @@ func _on_connected_fail():
 	
 func _on_server_disconnected():
 	remove_multiplayer_peer()
-	players.clear()
 	server_disconnected.emit()

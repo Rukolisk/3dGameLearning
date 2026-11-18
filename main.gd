@@ -77,16 +77,13 @@ func _on_player_hit(node: Node3D) -> void:
 @rpc("authority","call_local","reliable")
 func show_retry():
 	$UserInterface/Retry.show()
+	if !multiplayer.is_server():
+		$UserInterface/Retry/RetryLabel.text = "En attente de l'Hôte"
 
 func _unhandled_input(event: InputEvent) -> void:
 	if multiplayer.is_server():
 		if event.is_action_pressed("ui_accept") and $UserInterface/Retry.visible:
-			reload.rpc()
-			
-@rpc("authority","call_local","reliable")
-func reload():
-	get_tree().reload_current_scene()
-
+			SessionManager.load_game.rpc("res://main.tscn")
 
 func _on_deconnexion_pressed() -> void:
 	SessionManager.remove_multiplayer_peer()
