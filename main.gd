@@ -7,6 +7,7 @@ var players = []
 const SPAWN_PER_LINE = 3
 const SPAWN_SPACING = 3
 var mob_count = 0
+var scores = {}
 const MOB_MIN_SPEED=10
 const MOB_MAX_SPEED=18
 # Called when the node enters the scene tree for the first time.
@@ -27,12 +28,14 @@ func start_game() -> void:
 		var ligne = index / SPAWN_PER_LINE
 		var data = {
 			"id": peer_id,
-			"position": Vector3(colonne * SPAWN_SPACING, 0,ligne * SPAWN_SPACING)
+			"position": Vector3(colonne * SPAWN_SPACING, 0,ligne * SPAWN_SPACING),
 		}
+		scores[peer_id] = 0
 		var player = $PlayerSpawner.spawn(data)
 		player.hit.connect(_on_player_hit)
 		players.append(player)
 		index += 1
+	envoyer_classement()
 	$MobTimer.start()
 	
 func spawn_player(data: Variant) -> Node:
@@ -49,7 +52,7 @@ func spawn_mob(data: Variant) -> Node:
 	var mob = mob_scene.instantiate()
 	mob.name = str(data["id"])
 	mob.initialize(data["position"], data["player_position"],data["random_speed"], data["random_rotate"])
-	mob.squashed.connect($UserInterface/ScoreLabel._on_mob_squashed.bind())
+	mob.squashed.connect(_on_mob_squashed)
 	return mob
 	
 func _on_mob_timer_timeout() -> void:
@@ -105,3 +108,19 @@ func _on_player_disconnected(id) -> void:
 	# 3. S'il existe encore, on le fait mourir
 	if player != null:
 		player.die()
+
+func _on_mob_squashed(squasher)-> void:
+	scores[squasher]+=1
+	envoyer_classement()
+	
+func envoyer_classement():
+	var classement = []
+	for id in scores:
+		classement.append({ "name": SessionManager.players[id].name, "score":scores[id]})
+	classement.sort_custom(tri_par_score)
+	$UserInterface/ScoreLabel.afficher_classement.rpc(classement)
+
+func tri_par_score(a, b):
+	if a.score > b.score:
+		return true
+	return false

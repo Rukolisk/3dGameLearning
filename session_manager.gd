@@ -9,7 +9,7 @@ const DEFAULT_SERVER_IP = "127.0.0.1"
 const MAX_CONNECTIONS = 9
 
 var players = {}
-var player_info = {"name": "", "score": 0}
+var player_info = {"name": ""}
 var players_loaded = []
 var loading = false
 

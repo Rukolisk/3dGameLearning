@@ -1,5 +1,5 @@
 extends CharacterBody3D
-signal squashed
+signal squashed(squasher)
 @export var min_speed = 10
 @export var max_speed = 18
 
@@ -9,8 +9,9 @@ func _physics_process(delta: float) -> void:
 @rpc("any_peer", "call_local", "reliable")
 func squash():
 	if !is_queued_for_deletion():
+		var squasher = multiplayer.get_remote_sender_id()
 		queue_free()
-		squashed.emit()
+		squashed.emit(squasher)
 
 func initialize(start_position, player_position, speed, angle):
 	var target_position = player_position
